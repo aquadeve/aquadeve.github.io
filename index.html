@@ -6,79 +6,100 @@
 <title>AppIntentLauncherSample</title>
 
 <style>
-    body{
-        margin:0;
-        font-family:Arial, Helvetica, sans-serif;
-        background:#111827;
-        color:white;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        min-height:100vh;
-    }
 
-    .container{
-        width:90%;
-        max-width:900px;
-    }
+body{
+    margin:0;
+    background:#111827;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-    h1{
-        font-size:3rem;
-        margin-bottom:10px;
-    }
+.container{
+    width:90%;
+    max-width:1000px;
+}
 
-    p{
-        color:#cbd5e1;
-    }
+h1{
+    font-size:3rem;
+    margin-bottom:10px;
+}
 
-    .grid{
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-        gap:20px;
-        margin-top:30px;
-    }
+.subtitle{
+    color:#cbd5e1;
+    margin-bottom:30px;
+}
 
-    .card{
-        background:#1f2937;
-        padding:20px;
-        border-radius:16px;
-        box-shadow:0 0 20px rgba(0,0,0,0.4);
-        transition:0.2s;
-    }
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
+}
 
-    .card:hover{
-        transform:translateY(-4px);
-    }
+.card{
+    background:#1f2937;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.35);
+}
 
-    button{
-        width:100%;
-        border:none;
-        padding:14px;
-        border-radius:12px;
-        background:#2563eb;
-        color:white;
-        font-size:1rem;
-        cursor:pointer;
-        margin-top:12px;
-    }
+.card h2{
+    margin-top:0;
+}
 
-    button:hover{
-        background:#1d4ed8;
-    }
+.card p{
+    color:#cbd5e1;
+}
 
-    .small{
-        font-size:0.85rem;
-        color:#94a3b8;
-        margin-top:8px;
-        word-break:break-all;
-    }
+button{
+    width:100%;
+    border:none;
+    padding:14px;
+    margin-top:15px;
+    border-radius:12px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:1rem;
+}
 
-    footer{
-        margin-top:40px;
-        color:#64748b;
-        text-align:center;
-        font-size:0.9rem;
-    }
+button:hover{
+    background:#1d4ed8;
+}
+
+.small{
+    margin-top:12px;
+    font-size:0.85rem;
+    color:#94a3b8;
+    word-break:break-all;
+}
+
+footer{
+    margin-top:40px;
+    text-align:center;
+}
+
+footer a{
+    color:#60a5fa;
+    text-decoration:none;
+}
+
+.status{
+    margin-top:25px;
+    padding:14px;
+    background:#0f172a;
+    border-radius:12px;
+    color:#93c5fd;
+    font-size:0.95rem;
+}
+
+.hidden-frame{
+    display:none;
+}
+
 </style>
 </head>
 
@@ -88,19 +109,19 @@
 
     <h1>AppIntentLauncherSample</h1>
 
-    <p>
-        Test Android Intent launching from embedded WebViews.
-        Designed for GitHub Pages and Fire OS / Android WebViews.
-    </p>
+    <div class="subtitle">
+        WebView-compatible Android App Launcher Demo
+    </div>
 
     <div class="grid">
 
-        <!-- Silk Browser -->
+        <!-- SILK -->
         <div class="card">
+
             <h2>Amazon Silk</h2>
 
             <p>
-                Launch Amazon Silk Browser externally.
+                Launch the Silk Browser externally.
             </p>
 
             <button onclick="openSilk()">
@@ -108,16 +129,18 @@
             </button>
 
             <div class="small">
-                package=com.amazon.cloud9
+                com.amazon.cloud9
             </div>
+
         </div>
 
-        <!-- Chrome -->
+        <!-- CHROME -->
         <div class="card">
+
             <h2>Google Chrome</h2>
 
             <p>
-                Launch Chrome externally.
+                Launch Google Chrome externally.
             </p>
 
             <button onclick="openChrome()">
@@ -125,16 +148,18 @@
             </button>
 
             <div class="small">
-                package=com.android.chrome
+                com.android.chrome
             </div>
+
         </div>
 
-        <!-- YouTube -->
+        <!-- YOUTUBE -->
         <div class="card">
-            <h2>YouTube App</h2>
+
+            <h2>YouTube</h2>
 
             <p>
-                Launch the YouTube app directly.
+                Open the YouTube app externally.
             </p>
 
             <button onclick="openYouTube()">
@@ -142,12 +167,14 @@
             </button>
 
             <div class="small">
-                package=com.google.android.youtube
+                com.google.android.youtube
             </div>
+
         </div>
 
-        <!-- Play Store -->
+        <!-- PLAY STORE -->
         <div class="card">
+
             <h2>Play Store</h2>
 
             <p>
@@ -161,64 +188,151 @@
             <div class="small">
                 market://details?id=com.android.chrome
             </div>
+
         </div>
 
     </div>
 
-<footer>
-    <a href="https://google.com"
-       style="color:#60a5fa;text-decoration:none;">
-       Go back to Google
-    </a>
-</footer>
+    <div class="status" id="statusBox">
+        Ready.
+    </div>
+
+    <footer>
+        <br>
+        <a href="https://google.com">
+            Go back to Google
+        </a>
+    </footer>
 
 </div>
 
+<!-- hidden iframe fallback -->
+<iframe id="hiddenFrame" class="hidden-frame"></iframe>
+
 <script>
 
-function launchIntent(intentUrl) {
-    try {
-        window.location.href = intentUrl;
-    } catch (e) {
-        console.error("Intent launch failed:", e);
-        alert("Intent launch failed.");
-    }
+/*
+    WEBVIEW SAFE APP LAUNCHER
+    --------------------------
+    Uses multiple fallback methods:
+    1. intent://
+    2. iframe injection
+    3. window.open
+    4. HTTPS fallback
+*/
+
+function updateStatus(text) {
+
+    document.getElementById("statusBox").innerText = text;
 }
+
+function tryLaunch(intentUrl, fallbackUrl) {
+
+    updateStatus("Attempting to launch app...");
+
+    // Method 1: iframe
+    try {
+
+        const iframe = document.getElementById("hiddenFrame");
+
+        iframe.src = intentUrl;
+
+    } catch(e) {
+        console.log(e);
+    }
+
+    // Method 2: delayed navigation
+    setTimeout(() => {
+
+        try {
+
+            window.location.href = intentUrl;
+
+        } catch(e) {
+            console.log(e);
+        }
+
+    }, 250);
+
+    // Method 3: popup attempt
+    setTimeout(() => {
+
+        try {
+
+            window.open(intentUrl);
+
+        } catch(e) {
+            console.log(e);
+        }
+
+    }, 500);
+
+    // Final fallback
+    setTimeout(() => {
+
+        updateStatus(
+            "If app did not open, using fallback URL..."
+        );
+
+        window.location.href = fallbackUrl;
+
+    }, 2500);
+}
+
+/* ========================= */
+/* APPS */
+/* ========================= */
 
 function openSilk() {
 
-    launchIntent(
+    tryLaunch(
         "intent://www.amazon.com/#Intent;" +
         "scheme=https;" +
         "package=com.amazon.cloud9;" +
-        "end"
+        "end",
+
+        "https://www.amazon.com"
     );
 }
 
 function openChrome() {
 
-    launchIntent(
+    tryLaunch(
         "intent://www.google.com/#Intent;" +
         "scheme=https;" +
         "package=com.android.chrome;" +
-        "end"
+        "end",
+
+        "https://www.google.com"
     );
 }
 
 function openYouTube() {
 
-    launchIntent(
+    tryLaunch(
         "intent://www.youtube.com/#Intent;" +
         "scheme=https;" +
         "package=com.google.android.youtube;" +
-        "end"
+        "end",
+
+        "https://youtube.com"
     );
 }
 
 function openPlayStore() {
 
-    window.location.href =
-        "market://details?id=com.android.chrome";
+    updateStatus("Opening Play Store...");
+
+    try {
+
+        window.location.href =
+            "market://details?id=com.android.chrome";
+
+    } catch(e) {
+
+        window.location.href =
+            "https://play.google.com/store/apps/details?id=com.android.chrome";
+    }
 }
 
 </script>
