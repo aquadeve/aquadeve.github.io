@@ -21,6 +21,7 @@ body{
 .container{
     width:90%;
     max-width:1000px;
+    padding:30px 0;
 }
 
 h1{
@@ -85,6 +86,7 @@ footer{
 footer a{
     color:#60a5fa;
     text-decoration:none;
+    font-size:1rem;
 }
 
 .status{
@@ -94,10 +96,7 @@ footer a{
     border-radius:12px;
     color:#93c5fd;
     font-size:0.95rem;
-}
-
-.hidden-frame{
-    display:none;
+    line-height:1.5;
 }
 
 </style>
@@ -110,45 +109,45 @@ footer a{
     <h1>AppIntentLauncherSample</h1>
 
     <div class="subtitle">
-        WebView-compatible Android App Launcher Demo
+        Legacy Fire OS / Android WebView Compatible Launcher
     </div>
 
     <div class="grid">
 
-        <!-- SILK -->
+        <!-- AMAZON -->
         <div class="card">
 
             <h2>Amazon Silk</h2>
 
             <p>
-                Launch the Silk Browser externally.
+                Attempts to open Silk externally using only HTTPS-compatible methods.
             </p>
 
-            <button onclick="openSilk()">
+            <button onclick="openExternal('https://www.amazon.com')">
                 Open Silk Browser
             </button>
 
             <div class="small">
-                com.amazon.cloud9
+                HTTPS external launch method
             </div>
 
         </div>
 
-        <!-- CHROME -->
+        <!-- GOOGLE -->
         <div class="card">
 
-            <h2>Google Chrome</h2>
+            <h2>Google</h2>
 
             <p>
-                Launch Google Chrome externally.
+                Open Google externally.
             </p>
 
-            <button onclick="openChrome()">
-                Open Chrome
+            <button onclick="openExternal('https://www.google.com')">
+                Open Google
             </button>
 
             <div class="small">
-                com.android.chrome
+                Compatible with older WebViews
             </div>
 
         </div>
@@ -159,34 +158,34 @@ footer a{
             <h2>YouTube</h2>
 
             <p>
-                Open the YouTube app externally.
+                Open YouTube externally.
             </p>
 
-            <button onclick="openYouTube()">
+            <button onclick="openExternal('https://www.youtube.com')">
                 Open YouTube
             </button>
 
             <div class="small">
-                com.google.android.youtube
+                HTTPS fallback launcher
             </div>
 
         </div>
 
-        <!-- PLAY STORE -->
+        <!-- REDDIT -->
         <div class="card">
 
-            <h2>Play Store</h2>
+            <h2>Reddit</h2>
 
             <p>
-                Open the Google Play Store.
+                Open Reddit externally.
             </p>
 
-            <button onclick="openPlayStore()">
-                Open Play Store
+            <button onclick="openExternal('https://reddit.com')">
+                Open Reddit
             </button>
 
             <div class="small">
-                market://details?id=com.android.chrome
+                External browser redirect
             </div>
 
         </div>
@@ -194,144 +193,109 @@ footer a{
     </div>
 
     <div class="status" id="statusBox">
-        Ready.
+        Ready.<br>
+        This version avoids intent:// and market:// schemes because older Fire OS WebViews block them.
     </div>
 
     <footer>
         <br>
-        <a href="https://google.com">
+
+        <a href="https://google.com" target="_blank">
             Go back to Google
         </a>
+
     </footer>
 
 </div>
 
-<!-- hidden iframe fallback -->
-<iframe id="hiddenFrame" class="hidden-frame"></iframe>
-
 <script>
 
 /*
-    WEBVIEW SAFE APP LAUNCHER
-    --------------------------
-    Uses multiple fallback methods:
-    1. intent://
-    2. iframe injection
-    3. window.open
-    4. HTTPS fallback
+    LEGACY WEBVIEW SAFE LAUNCHER
+    ----------------------------
+    No intent://
+    No market://
+    No custom URI schemes
+
+    Designed for:
+    - Old Fire OS WebViews
+    - Echo Show devices
+    - Restricted embedded browsers
 */
 
-function updateStatus(text) {
+function updateStatus(text){
 
-    document.getElementById("statusBox").innerText = text;
+    document.getElementById("statusBox").innerHTML = text;
 }
 
-function tryLaunch(intentUrl, fallbackUrl) {
+function openExternal(url){
 
-    updateStatus("Attempting to launch app...");
+    updateStatus(
+        "Attempting external browser launch..."
+    );
 
-    // Method 1: iframe
+    // METHOD 1
     try {
 
-        const iframe = document.getElementById("hiddenFrame");
+        const popup = window.open(
+            url,
+            "_blank"
+        );
 
-        iframe.src = intentUrl;
+        if (popup) {
 
-    } catch(e) {
+            updateStatus(
+                "External browser request sent."
+            );
+
+            return;
+        }
+
+    } catch(e){
         console.log(e);
     }
 
-    // Method 2: delayed navigation
-    setTimeout(() => {
-
-        try {
-
-            window.location.href = intentUrl;
-
-        } catch(e) {
-            console.log(e);
-        }
-
-    }, 250);
-
-    // Method 3: popup attempt
-    setTimeout(() => {
-
-        try {
-
-            window.open(intentUrl);
-
-        } catch(e) {
-            console.log(e);
-        }
-
-    }, 500);
-
-    // Final fallback
-    setTimeout(() => {
-
-        updateStatus(
-            "If app did not open, using fallback URL..."
-        );
-
-        window.location.href = fallbackUrl;
-
-    }, 2500);
-}
-
-/* ========================= */
-/* APPS */
-/* ========================= */
-
-function openSilk() {
-
-    tryLaunch(
-        "intent://www.amazon.com/#Intent;" +
-        "scheme=https;" +
-        "package=com.amazon.cloud9;" +
-        "end",
-
-        "https://www.amazon.com"
-    );
-}
-
-function openChrome() {
-
-    tryLaunch(
-        "intent://www.google.com/#Intent;" +
-        "scheme=https;" +
-        "package=com.android.chrome;" +
-        "end",
-
-        "https://www.google.com"
-    );
-}
-
-function openYouTube() {
-
-    tryLaunch(
-        "intent://www.youtube.com/#Intent;" +
-        "scheme=https;" +
-        "package=com.google.android.youtube;" +
-        "end",
-
-        "https://youtube.com"
-    );
-}
-
-function openPlayStore() {
-
-    updateStatus("Opening Play Store...");
-
+    // METHOD 2
     try {
 
-        window.location.href =
-            "market://details?id=com.android.chrome";
+        const link = document.createElement("a");
 
-    } catch(e) {
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
 
-        window.location.href =
-            "https://play.google.com/store/apps/details?id=com.android.chrome";
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        updateStatus(
+            "Fallback link launch attempted."
+        );
+
+        return;
+
+    } catch(e){
+        console.log(e);
+    }
+
+    // METHOD 3
+    try {
+
+        location.replace(url);
+
+        updateStatus(
+            "Using final fallback redirect..."
+        );
+
+    } catch(e){
+
+        updateStatus(
+            "Launch failed. WebView is heavily restricted."
+        );
+
+        console.log(e);
     }
 }
 
